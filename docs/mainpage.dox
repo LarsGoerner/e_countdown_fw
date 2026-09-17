@@ -1,0 +1,102 @@
+/**
+ * @mainpage E-Countdown Firmware Project
+ * 
+ * Target of this project is to create a firmware for a small battery driven
+ * which provides date information as well as a countdown (in days) until
+ * a event day defined by the client via Bluetooth LE.
+ * 
+ * The device also provides multiple customization options. The background
+ * can be customized by any image content. Font family, style and size are
+ * customizable, too. The device contains multiple fonts to choose.
+ * 
+ * A Fuel Gauge provides battery data which are presented on the display
+ * and via bluetooth interface.
+ * 
+ * Besides the actual firmware this project also contains a display driver component
+ * for the [Waveshare 4.26inch e-paper Display](https://www.waveshare.com/product/displays/e-paper/epaper-2/4.26inch-e-paper.htm).
+ * 
+ * @subpage firmware_page "E-Countdown firmware"
+ * 
+ * @subpage display_driver_page "Display driver Component"
+ */
+
+/**
+ * @page firmware_page E-Countdown Firmware
+ * 
+ * ### Architecture
+ * 
+ * This firmware is split into 3 tasks:
+ * - Main Task (see @ref main.c)
+ *   - Initialize hardware and other tasks (see also @ref battery.h, @ref bt.h)
+ *   - Handles drawing and display (see also @ref display.h, @ref draw.h)
+ *   - Handles Image Storage (see also @ref settings.h, @ref draw.h)
+ * - Battery Task (@ref battery.h, @ref battery.c)
+ *   - Handles Fuel Gauge interrupts
+ *   - Updates battery related infos
+ * - Bluetooth LE (@ref bt.h, @ref bt.c)
+ *   - Handles GATT server
+ *   - Handles Settings Storage (see also @ref settings.h)
+ * 
+ * After initialization is completed the main thread is suspended.
+ * It is for the other tasks to wakeup the main task if the display
+ * content needs to be refreshed.
+ * 
+ * @mermaid
+ * sequenceDiagram
+ * 	participant MAIN as Main Thread
+ * 	participant BAT as Battery Thread
+ * 	participant BLE as BLE Thread
+ * 
+ * 	activate MAIN
+ * 	MAIN->>MAIN: Initialize hardware
+ * 	MAIN->>BLE: Initialize
+ * 	activate BLE
+ * 	MAIN->>BAT: Initialize
+ * 	activate BAT
+ * 	MAIN->>MAIN: Initialize display & drawing logic
+ * 	deactivate MAIN
+ * 
+ * 	BAT->>MAIN: New Battery data
+ * 	activate MAIN
+ * 	MAIN->>MAIN: Refresh display content
+ * 	deactivate MAIN
+ * 
+ * 	BLE->>MAIN: New client data
+ * 	activate MAIN
+ * 	MAIN->>MAIN: Refresh display content
+ * 	deactivate MAIN
+ * 	deactivate BAT
+ * 	deactivate BLE
+ * @endmermaid
+ */
+
+/**
+ * @page display_driver_page Display Driver Component
+ * 
+ * - Header File: @ref epd4in26.h
+ * - Implementation: @ref epd4in26.c
+ * 
+ * ### Main Functions
+ * 
+ * The display driver is setup as an ESP LCD panel driver.
+ * Use @ref esp_lcd_new_panel_epd4in26() to create a driver instance.
+ * 
+ * ### Extra Functions
+ * 
+ * This driver extends the default ESP LCD driver interface by 2 further functions.
+ * 
+ * - @ref epd4in26_gen_test(): Refresh the display with a test image (see @ref epd4in26_test_id_t)
+ * - @ref epd4in26_refresh(): Trigger a display refresh
+ * 
+ * ### Driver Configuration Options
+ * 
+ * The driver offers some build time configurations found in @ref epd4in26.c.
+ * 
+ * The driver's pixel format can be configured by setting one of these:
+ * - @ref DSP_BPP_1: Display converts images to 1BPP
+ * - @ref DSP_BPP_2: Display converts images to 2BPP
+ * 
+ * It is also possible to configure the dithering algorithm:
+ * - @ref DITHER_ALGO_SL: Sierra Lite Dithering
+ * - @ref DITHER_ALGO_JJN: Jarvis, Judice and Ninke Dithering
+ */
