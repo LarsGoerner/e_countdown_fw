@@ -1,8 +1,8 @@
 # E-Countdown Firmware Project
 
 Target of this project is to create a firmware for a small battery driven
-which provides date information as well as a countdown (in days) until
-a event day defined by the client via Bluetooth LE.
+e-paper display device which provides date information as well as a
+countdown (in days) until an event day defined by the client via Bluetooth LE.
 
 The device also provides multiple customization options. The background
 can be customized by any image content. Font family, style and size are
@@ -11,7 +11,7 @@ customizable, too. The device contains multiple fonts to choose.
 A Fuel Gauge provides battery data which are presented on the display
 and via bluetooth interface.
 
-Besides the actual firmware this project also contains a display driver component
+Besides the actual firmware, this project also contains a display driver component
 for the [Waveshare 4.26inch e-paper Display](https://www.waveshare.com/product/displays/e-paper/epaper-2/4.26inch-e-paper.htm).
 
 ## Build this project
